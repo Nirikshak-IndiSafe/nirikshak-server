@@ -5,7 +5,6 @@ import { Types } from 'mongoose';
 export const createEvent = async (req, res) => {
     try {
         const { name, start, end, latitude, longitude, radius } = req.body;
-        console.log(req.body);
         const location = {
             type: 'Point',
             coordinates: [latitude, longitude],
@@ -83,12 +82,13 @@ const _getEvent = async (id) => {
 
 export const getEvent = async (req, res) => {
     try {
-        const { id } = req.body;
-        const event = await _getEvent(id);
+        const { id } = req.params;
+        const event = await Event.findById(id).populate('personnels');
         return res.status(200).json({
             event,
         });
     } catch (error) {
+        console.error(error);
         return res.status(500).json({
             message: 'Internal server error',
         });
@@ -106,7 +106,6 @@ export const addPersonnel = async (req, res) => {
             (personnel) => new Types.ObjectId(personnel)
         );
 
-        console.log(newPersonnels);
         event = await Event.findByIdAndUpdate(eventId, {
             $set: {
                 personnels: newPersonnels,

@@ -11,6 +11,7 @@ import {
 
 const router = Router();
 
+router.get('/:id', getEvent);
 router.post('/create', createEvent);
 router.delete('/delete', deleteEvent);
 router.get('/active-events', getActiveEvents);
