@@ -1,3 +1,4 @@
+import moment from 'moment';
 import { Event } from '../models/index.js';
 
 export const createEvent = async (req, res) => {
@@ -56,8 +57,16 @@ export const updateEvent = async (req, res) => {
 
 export const getActiveEvents = async (req, res) => {
     try {
-        const events = await Event.find({ $where: {} });
+        const events = await Event.find({
+            start: {
+                $gte: moment().startOf('day').toDate(),
+                $lte: moment().startOf('day').add(7, 'day').toDate(),
+            },
+            deleted: false,
+        });
+        return res.status(200).json(events);
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             message: 'Internal server error',
         });
