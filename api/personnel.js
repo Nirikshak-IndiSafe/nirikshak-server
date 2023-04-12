@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
     getPersonnel,
     getPersonnelById,
+    getDetailedPersonnelById,
     login,
     register,
 } from '../controllers/personnel.js';
@@ -10,6 +11,7 @@ const router = Router();
 
 router.get('/', getPersonnel);
 router.get('/:id', getPersonnelById);
+router.get('/detail/:id', getDetailedPersonnelById);
 router.post(
     '/register',
     [
@@ -26,12 +28,15 @@ router.post(
     register
 );
 
-router.post('/login', [
-    check('id_number', 'Id number is required').not().isEmpty(),
-    check('password', 'Password not valid ').not().isEmpty().isLength({
-        min: 8
-    })
-]
-    , login)
+router.post(
+    '/login',
+    [
+        check('id_number', 'Id number is required').not().isEmpty(),
+        check('password', 'Password not valid ').not().isEmpty().isLength({
+            min: 8,
+        }),
+    ],
+    login
+);
 
 export default router;
