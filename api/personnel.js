@@ -15,15 +15,23 @@ router.post(
     [
         check('firstName', 'First Name is required').not().isEmpty(),
         check('lastName', 'Last Name is required').not().isEmpty(),
+        check('dob', 'Date of Birth is required').not().isEmpty(),
         check('admin', 'IsAdmin is required').not().isEmpty().isBoolean(),
         check('batch', 'Batch Number is required')
             .not()
             .isEmpty()
             .isAlphanumeric(),
-        check('station', 'Please include a valid Station Id').not().isEmpty(),
+        // check('station', 'Please include a valid Station Id').not().isEmpty(),
     ],
     register
 );
-router.post('/login', login);
+
+router.post('/login', [
+    check('id_number', 'Id number is required').not().isEmpty(),
+    check('password', 'Password not valid ').not().isEmpty().isLength({
+        min: 8
+    })
+]
+    , login)
 
 export default router;
