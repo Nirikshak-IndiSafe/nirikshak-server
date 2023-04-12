@@ -16,6 +16,10 @@ const stationSchema = new Schema({
         },
         coordinates: [Number],
     },
+    deleted: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const Station = model('Station', stationSchema);

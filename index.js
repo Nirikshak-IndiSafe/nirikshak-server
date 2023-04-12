@@ -2,7 +2,7 @@ import express, { json, urlencoded } from 'express';
 import cors from 'cors';
 import { PORT } from './config/constants.js';
 import { connectDb } from './utils/index.js';
-import { eventRoutes, personnelRoutes } from './api/index.js';
+import { eventRoutes, personnelRoutes, stationRoutes } from './api/index.js';
 
 const main = async () => {
     try {
@@ -17,6 +17,7 @@ const main = async () => {
         // Routes
         app.use('/api/personnel', personnelRoutes);
         app.use('/api/events', eventRoutes);
+        app.use('/api/stations', stationRoutes);
 
         app.listen(PORT, () => {
             console.log(`Listening to port: ${PORT}`);
