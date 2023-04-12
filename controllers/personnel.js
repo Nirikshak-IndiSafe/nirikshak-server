@@ -1,6 +1,6 @@
-import { Personnel } from '../models/index.js'
+import { Personnel } from '../models/index.js';
 import { validationResult } from 'express-validator';
-import { ObjectId } from 'mongoose'
+import { ObjectId } from 'mongoose';
 
 export const register = async (req, res) => {
     const errors = validationResult(req);
@@ -9,25 +9,28 @@ export const register = async (req, res) => {
             errors: errors.array(),
         });
 
-
     const { firstName, lastName, dob, admin, batch, station } = req.body;
 
     try {
         const personnelData = {
-            firstName, lastName, dob: new Date(dob), admin, batch, station: ObjectId(station)
-        }
+            firstName,
+            lastName,
+            dob: new Date(dob),
+            admin,
+            batch,
+            station: ObjectId(station),
+        };
 
         await Personnel.create({
-            ...personnelData
+            ...personnelData,
         });
     } catch (error) {
         console.error(error);
-        return res.status(500).join({
-            message: "Internal Server Error"
-        })
+        return res.status(500).json({
+            message: 'Internal Server Error',
+        });
     }
-}
-
+};
 
 export const login = async (req, res) => {
     const errors = validationResult(req);
@@ -37,16 +40,13 @@ export const login = async (req, res) => {
         });
 
     try {
-
-
     } catch (error) {
         console.error(error);
-        return res.status(500).join({
-            message: "Internal Server Error"
-        })
+        return res.status(500).json({
+            message: 'Internal Server Error',
+        });
     }
-}
-
+};
 
 export const getPersonnel = async (req, res) => {
     const errors = validationResult(req);
@@ -56,15 +56,13 @@ export const getPersonnel = async (req, res) => {
         });
 
     try {
-
     } catch (error) {
         console.error(error);
-        return res.status(500).join({
-            message: "Internal Server Error"
-        })
+        return res.status(500).json({
+            message: 'Internal Server Error',
+        });
     }
-}
-
+};
 
 export const getPersonnelById = async (req, res) => {
     const errors = validationResult(req);
@@ -73,13 +71,11 @@ export const getPersonnelById = async (req, res) => {
             errors: errors.array(),
         });
 
-
     try {
-
     } catch (error) {
         console.error(error);
-        return res.status(500).join({
-            message: "Internal Server Error"
-        })
+        return res.status(500).json({
+            message: 'Internal Server Error',
+        });
     }
-}
+};

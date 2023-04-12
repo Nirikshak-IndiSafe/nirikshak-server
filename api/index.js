@@ -1,3 +1,3 @@
-import personnelRoutes from './personnel.js'
+import personnelRoutes from './personnel.js';
 
-export { personnelRoutes }
+export { personnelRoutes };

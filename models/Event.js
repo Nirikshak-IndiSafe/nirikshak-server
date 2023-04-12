@@ -21,6 +21,10 @@ const eventSchema = new Schema({
         },
         coordinates: [Number],
     },
+    radius: {
+        type: Number,
+        required: true,
+    },
     personnels: {
         type: [
             {
