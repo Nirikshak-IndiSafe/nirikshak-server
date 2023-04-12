@@ -1,3 +1,4 @@
-import personnelRoutes from './personnel.js'
+import personnelRoutes from './personnel.js';
+import eventRoutes from './event.js';
 
-export { personnelRoutes }
+export { personnelRoutes, eventRoutes };

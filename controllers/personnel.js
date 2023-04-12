@@ -1,4 +1,4 @@
-import { Personnel } from '../models/index.js'
+import { Personnel } from '../models/index.js';
 import { validationResult } from 'express-validator';
 import { ObjectId } from 'mongoose'
 import { idNumberGen } from '../utils/psuedoNumber.js';
@@ -8,7 +8,6 @@ export const register = async (req, res) => {
         return res.status(400).json({
             errors: errors.array(),
         });
-
 
     const { firstName, lastName, dob, admin, batch, station } = req.body;
 
@@ -21,9 +20,8 @@ export const register = async (req, res) => {
             password: `${firstName[0]}${lastName[0]}ip@123`
             // station: ObjectId(station)
         }
-
         await Personnel.create({
-            ...personnelData
+            ...personnelData,
         });
         return res.status(200).json({
             message: "Personnel Created",
@@ -38,8 +36,7 @@ export const register = async (req, res) => {
             message: "Internal Server Error"
         })
     }
-}
-
+};
 
 export const login = async (req, res) => {
     const errors = validationResult(req);
@@ -73,8 +70,7 @@ export const login = async (req, res) => {
             message: "Internal Server Error"
         })
     }
-}
-
+};
 
 export const getPersonnel = async (req, res) => {
     const errors = validationResult(req);
@@ -92,8 +88,7 @@ export const getPersonnel = async (req, res) => {
             message: "Internal Server Error"
         })
     }
-}
-
+};
 
 export const getPersonnelById = async (req, res) => {
     const errors = validationResult(req);
@@ -117,4 +112,4 @@ export const getPersonnelById = async (req, res) => {
             message: "Internal Server Error"
         })
     }
-}
+};

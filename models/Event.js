@@ -9,10 +9,12 @@ const eventSchema = new Schema({
     start: {
         type: Date,
         required: true,
+        default: new Date(),
     },
     end: {
         type: Date,
         required: true,
+        default: new Date(),
     },
     location: {
         type: {
@@ -21,6 +23,10 @@ const eventSchema = new Schema({
         },
         coordinates: [Number],
     },
+    radius: {
+        type: Number,
+        required: true,
+    },
     personnels: {
         type: [
             {
@@ -28,6 +34,10 @@ const eventSchema = new Schema({
                 ref: Personnel,
             },
         ],
+    },
+    deleted: {
+        type: Boolean,
+        default: false,
     },
 });
 
