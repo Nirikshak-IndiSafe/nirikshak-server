@@ -11,11 +11,11 @@ import {
 
 const router = Router();
 
-router.get('/:id', getEvent);
 router.post('/create', createEvent);
 router.delete('/delete', deleteEvent);
 router.get('/active-events', getActiveEvents);
 router.put('/add-personnel', addPersonnel);
 router.put('/remove-personnel', removePersonnel);
+router.get('/:id', getEvent);
 
 export default router;

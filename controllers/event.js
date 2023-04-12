@@ -65,6 +65,7 @@ export const getActiveEvents = async (req, res) => {
             },
             deleted: false,
         });
+        console.log(events);
 
         return res.status(200).json(events);
     } catch (error) {
