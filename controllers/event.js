@@ -1,6 +1,7 @@
 import moment from 'moment';
 import { Event, Personnel } from '../models/index.js';
 import { Types } from 'mongoose';
+import PersonnelEvent from '../models/PersonnelEvent.js';
 
 export const createEvent = async (req, res) => {
     try {
@@ -98,8 +99,17 @@ export const getEvent = async (req, res) => {
 
 export const addPersonnel = async (req, res) => {
     try {
-        const { eventId, personnels } = req.body;
+        let { eventId, personnels } = req.body;
         let event = await _getEvent(eventId);
+        let nonAvailablePersonnels = await PersonnelEvent.find();
+        nonAvailablePersonnels = nonAvailablePersonnels.map((personelEvent) =>
+            personelEvent.personnel.toString()
+        );
+        console.log(nonAvailablePersonnels);
+        personnels = personnels.filter(
+            (personnel) => !nonAvailablePersonnels.includes(personnel)
+        );
+        console.log(personnels);
         let newPersonnels = personnels.concat(
             event.personnels.map((personnel) => personnel.toString())
         );
@@ -112,6 +122,15 @@ export const addPersonnel = async (req, res) => {
                 personnels: newPersonnels,
             },
         });
+        await PersonnelEvent.insertMany(
+            personnels.map((personnel) => {
+                const data = {
+                    personnel: new Types.ObjectId(personnel),
+                    event: new Types.ObjectId(eventId),
+                };
+                return data;
+            })
+        );
         return res.status(200).json({
             message: 'Personnels Added',
             event: event,
@@ -128,19 +147,39 @@ export const removePersonnel = async (req, res) => {
     try {
         const { eventId, personnels } = req.body;
         let event = await _getEvent(eventId);
-        let newPersonnels = event.personnels
-            .map((personnel) => personnel.toString())
-            .filter((personnel) => !personnels.includes(personnel));
+        let nonAvailablePersonnels = await PersonnelEvent.find();
+        nonAvailablePersonnels = nonAvailablePersonnels.map((personelEvent) =>
+            personelEvent.personnel.toString()
+        );
+        let newPersonnels = event.personnels.map((personnel) =>
+            personnel.toString()
+        );
+        console.log(nonAvailablePersonnels);
+
+        let removedPersonnels = nonAvailablePersonnels
+            .filter((personnel) => personnels.includes(personnel))
+            .filter((personnel) => newPersonnels.includes(personnel));
+        newPersonnels = newPersonnels.filter(
+            (personnel) => !personnels.includes(personnel)
+        );
         newPersonnels = Array.from(new Set(newPersonnels)).map(
             (personnel) => new Types.ObjectId(personnel)
         );
-        await Event.findByIdAndUpdate(eventId, {
+        console.log(removedPersonnels);
+        console.log(newPersonnels);
+
+        await PersonnelEvent.deleteMany({
+            personnel: { $in: removedPersonnels },
+        });
+
+        const newEvent = await Event.findByIdAndUpdate(eventId, {
             $set: {
                 personnels: newPersonnels,
             },
         });
         return res.status(200).json({
             message: 'Personnels Removed',
+            event: newEvent,
         });
     } catch (error) {
         console.error(error);

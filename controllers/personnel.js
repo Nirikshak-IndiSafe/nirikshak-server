@@ -2,6 +2,7 @@ import { Event, Personnel } from '../models/index.js';
 import { validationResult } from 'express-validator';
 import { Types } from 'mongoose';
 import { idNumberGen } from '../utils/psuedoNumber.js';
+import PersonnelEvent from '../models/PersonnelEvent.js';
 
 export const register = async (req, res) => {
     const errors = validationResult(req);
@@ -132,12 +133,16 @@ export const getDetailedPersonnelById = async (req, res) => {
     const { id } = req.params;
     try {
         const personnel = await _getPersonnel(id);
+        const personnelEvent = await PersonnelEvent.find({
+            personnel: new Types.ObjectId(id),
+        });
         const personnelEvents = await Event.find({
             personnels: id,
         });
         return res.status(200).json({
             personnel,
-            personnelEvents,
+            'all_events': personnelEvents,
+            'current_event': personnelEvent,
         });
     } catch (error) {
         console.error(error);
