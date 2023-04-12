@@ -2,14 +2,27 @@ import moment from 'moment';
 import { Event, Personnel } from '../models/index.js';
 import { Types, ObjectId } from 'mongoose';
 import PersonnelEvent from '../models/PersonnelEvent.js';
+import GeocoderArcGIS from 'geocoder-arcgis';
+
+const geocoder = new GeocoderArcGIS({
+    client_id: 'WCnuOto8agJh2chF', // optional, see below
+    client_secret: 'dd256c1ca70043788843a4a1050bdfc9', // optional, see below
+});
 
 export const createEvent = async (req, res) => {
     try {
-        const { name, start, end, latitude, longitude, radius, personName } =
-            req.body;
+        const { name, start, end, address, radius, personName } = req.body;
+        console.log(req.body);
+        // geocoder
+        //     .findAddressCandidates(address, {})
+        //     .then((data) => console.log(data.candidates[0].location))
+        //     .catch((error) => console.log(error));
+        const data = await geocoder.findAddressCandidates(address, {});
+        const loc = data.candidates[0].location;
+        console.log(loc);
         const location = {
             type: 'Point',
-            coordinates: [latitude, longitude],
+            coordinates: [loc.y, loc.x],
         };
         const event = await Event.create({
             name,
@@ -66,13 +79,14 @@ export const updateEvent = async (req, res) => {
 
 export const getActiveEvents = async (req, res) => {
     try {
-        const events = await Event.find({
-            start: {
-                $gte: moment().startOf('day').toDate(),
-                $lte: moment().startOf('day').add(7, 'day').toDate(),
-            },
-            deleted: false,
-        });
+        // const events = await Event.find({
+        //     start: {
+        //         $gte: moment().startOf('day').toDate(),
+        //         $lte: moment().startOf('day').add(7, 'day').toDate(),
+        //     },
+        //     deleted: false,
+        // });
+        const events = await Event.find();
         console.log(events);
 
         return res.status(200).json(events);
