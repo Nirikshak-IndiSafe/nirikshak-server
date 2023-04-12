@@ -141,8 +141,8 @@ export const getDetailedPersonnelById = async (req, res) => {
         });
         return res.status(200).json({
             personnel,
-            'all_events': personnelEvents,
-            'current_event': personnelEvent,
+            all_events: personnelEvents,
+            current_event: personnelEvent,
         });
     } catch (error) {
         console.error(error);

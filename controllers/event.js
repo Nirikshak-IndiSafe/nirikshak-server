@@ -1,22 +1,29 @@
 import moment from 'moment';
 import { Event, Personnel } from '../models/index.js';
-import { Types } from 'mongoose';
+import { Types, ObjectId } from 'mongoose';
 import PersonnelEvent from '../models/PersonnelEvent.js';
 
 export const createEvent = async (req, res) => {
     try {
-        const { name, start, end, latitude, longitude, radius } = req.body;
+        const { name, start, end, latitude, longitude, radius, personName } =
+            req.body;
         const location = {
             type: 'Point',
             coordinates: [latitude, longitude],
         };
-        await Event.create({
+        const event = await Event.create({
             name,
             start,
             end,
             location,
             radius,
+            personnels: personName,
         });
+        const personnelEvents = personName.map((person) => ({
+            event: event._id,
+            personnel: person,
+        }));
+        await PersonnelEvent.insertMany(personnelEvents);
         return res.status(201).json({
             message: 'Event created',
         });
