@@ -1,9 +1,11 @@
 import moment from 'moment';
-import { Event } from '../models/index.js';
+import { Event, Personnel } from '../models/index.js';
+import { Types } from 'mongoose';
 
 export const createEvent = async (req, res) => {
     try {
         const { name, start, end, latitude, longitude, radius } = req.body;
+        console.log(req.body);
         const location = {
             type: 'Point',
             coordinates: [latitude, longitude],
@@ -64,6 +66,7 @@ export const getActiveEvents = async (req, res) => {
             },
             deleted: false,
         });
+
         return res.status(200).json(events);
     } catch (error) {
         console.log(error);
@@ -73,14 +76,74 @@ export const getActiveEvents = async (req, res) => {
     }
 };
 
+const _getEvent = async (id) => {
+    const event = await Event.findById(id);
+    return event;
+};
+
 export const getEvent = async (req, res) => {
     try {
         const { id } = req.body;
-        const event = await Event.findById(id);
+        const event = await _getEvent(id);
         return res.status(200).json({
             event,
         });
     } catch (error) {
+        return res.status(500).json({
+            message: 'Internal server error',
+        });
+    }
+};
+
+export const addPersonnel = async (req, res) => {
+    try {
+        const { eventId, personnels } = req.body;
+        let event = await _getEvent(eventId);
+        let newPersonnels = personnels.concat(
+            event.personnels.map((personnel) => personnel.toString())
+        );
+        newPersonnels = Array.from(new Set(newPersonnels)).map(
+            (personnel) => new Types.ObjectId(personnel)
+        );
+
+        console.log(newPersonnels);
+        event = await Event.findByIdAndUpdate(eventId, {
+            $set: {
+                personnels: newPersonnels,
+            },
+        });
+        return res.status(200).json({
+            message: 'Personnels Added',
+            event: event,
+        });
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: 'Internal server error',
+        });
+    }
+};
+
+export const removePersonnel = async (req, res) => {
+    try {
+        const { eventId, personnels } = req.body;
+        let event = await _getEvent(eventId);
+        let newPersonnels = event.personnels
+            .map((personnel) => personnel.toString())
+            .filter((personnel) => !personnels.includes(personnel));
+        newPersonnels = Array.from(new Set(newPersonnels)).map(
+            (personnel) => new Types.ObjectId(personnel)
+        );
+        await Event.findByIdAndUpdate(eventId, {
+            $set: {
+                personnels: newPersonnels,
+            },
+        });
+        return res.status(200).json({
+            message: 'Personnels Removed',
+        });
+    } catch (error) {
+        console.error(error);
         return res.status(500).json({
             message: 'Internal server error',
         });

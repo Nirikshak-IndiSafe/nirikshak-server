@@ -1,7 +1,8 @@
 import { Personnel } from '../models/index.js';
 import { validationResult } from 'express-validator';
-import { ObjectId } from 'mongoose'
+import { Types } from 'mongoose';
 import { idNumberGen } from '../utils/psuedoNumber.js';
+
 export const register = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty())
@@ -17,8 +18,8 @@ export const register = async (req, res) => {
             dob: new Date(),
             admin, batch,
             id_number: idNumberGen(),
-            password: `${firstName[0]}${lastName[0]}ip@123`
-            // station: ObjectId(station)
+            password: `${firstName[0]}${lastName[0]}ip@123`,
+            station: new Types.ObjectId(station),
         }
         await Personnel.create({
             ...personnelData,

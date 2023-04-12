@@ -21,7 +21,7 @@ router.post(
             .not()
             .isEmpty()
             .isAlphanumeric(),
-        // check('station', 'Please include a valid Station Id').not().isEmpty(),
+        check('station', 'Please include a valid Station Id').not().isEmpty(),
     ],
     register
 );
