@@ -10,6 +10,10 @@ const PersonnelSchema = new Schema({
         type: String,
         required: true,
     },
+    password: {
+        type: String,
+        required: true,
+    },
     dob: {
         type: Date,
         required: true,
@@ -17,6 +21,11 @@ const PersonnelSchema = new Schema({
     admin: {
         type: Boolean,
         default: false,
+    },
+    id_number: {
+        type: Number,
+        required: true,
+        unique: true,
     },
     batch: {
         type: Number,
