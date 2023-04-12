@@ -75,6 +75,11 @@ export const getActiveEvents = async (req, res) => {
 
 export const getEvent = async (req, res) => {
     try {
+        const { id } = req.body;
+        const event = await Event.findById(id);
+        return res.status(200).json({
+            event,
+        });
     } catch (error) {
         return res.status(500).json({
             message: 'Internal server error',
