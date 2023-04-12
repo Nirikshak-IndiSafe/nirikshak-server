@@ -1,3 +1,3 @@
 import connectDb from './connectDb.js';
-
-export { connectDb };
+import { idNumberGen } from './psuedoNumber.js'
+export { connectDb, idNumberGen };

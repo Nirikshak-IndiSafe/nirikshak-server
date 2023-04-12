@@ -1,7 +1,7 @@
 import { Personnel } from '../models/index.js'
 import { validationResult } from 'express-validator';
 import { ObjectId } from 'mongoose'
-
+import { idNumberGen } from '../utils/psuedoNumber.js';
 export const register = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty())
@@ -14,15 +14,27 @@ export const register = async (req, res) => {
 
     try {
         const personnelData = {
-            firstName, lastName, dob: new Date(dob), admin, batch, station: ObjectId(station)
+            firstName, lastName,
+            dob: new Date(),
+            admin, batch,
+            id_number: idNumberGen(),
+            password: `${firstName[0]}${lastName[0]}ip@123`
+            // station: ObjectId(station)
         }
 
         await Personnel.create({
             ...personnelData
         });
+        return res.status(200).json({
+            message: "Personnel Created",
+            creds: {
+                id: personnelData.id_number,
+                password: personnelData.password
+            }
+        })
     } catch (error) {
         console.error(error);
-        return res.status(500).join({
+        return res.status(500).json({
             message: "Internal Server Error"
         })
     }
@@ -36,12 +48,28 @@ export const login = async (req, res) => {
             errors: errors.array(),
         });
 
-    try {
+    const { id_number, password } = req.body
 
+    try {
+        const user = await Personnel.findOne({
+            id_number
+        });
+
+        if (!user || user.password != password) {
+            return res.status(400).json({
+                errors: [
+                    {
+                        msg: "Invalid Id Number or Password",
+                    },
+                ],
+            });
+        }
+
+        return res.status(200).json(user)
 
     } catch (error) {
         console.error(error);
-        return res.status(500).join({
+        return res.status(500).json({
             message: "Internal Server Error"
         })
     }
@@ -56,10 +84,11 @@ export const getPersonnel = async (req, res) => {
         });
 
     try {
-
+        const personnels = await Personnel.find()
+        return res.status(200).json(personnels)
     } catch (error) {
         console.error(error);
-        return res.status(500).join({
+        return res.status(500).json({
             message: "Internal Server Error"
         })
     }
@@ -73,12 +102,18 @@ export const getPersonnelById = async (req, res) => {
             errors: errors.array(),
         });
 
+    const { id } = req.params;
 
     try {
-
+        const personnel = await Personnel.findById(id)
+        if (!personnel)
+            return res.status(404).json({
+                message: "Personnel Not Found"
+            })
+        return res.status(200).json(personnel)
     } catch (error) {
         console.error(error);
-        return res.status(500).join({
+        return res.status(500).json({
             message: "Internal Server Error"
         })
     }
