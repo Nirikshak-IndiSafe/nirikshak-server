@@ -14,6 +14,9 @@ export const createEvent = async (req, res) => {
             location,
             radius,
         });
+        return res.status(201).json({
+            message: 'Event created',
+        });
     } catch (error) {
         console.log(error);
         return res.status(500).json({
@@ -25,8 +28,16 @@ export const createEvent = async (req, res) => {
 export const deleteEvent = async (req, res) => {
     try {
         const { id } = req.body;
-        await Event.deleteOne({ $where: { id } });
+        await Event.findByIdAndUpdate(id, {
+            $set: {
+                deleted: true,
+            },
+        });
+        return res.status(204).json({
+            message: 'Event deleted',
+        });
     } catch (error) {
+        console.log(error);
         return res.status(500).json({
             message: 'Internal server error',
         });

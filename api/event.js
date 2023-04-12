@@ -10,3 +10,6 @@ import {
 const router = Router();
 
 router.post('/create', createEvent);
+router.delete('/delete', deleteEvent);
+
+export default router;
