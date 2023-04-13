@@ -1,13 +1,30 @@
 import { Station } from '../models/index.js';
-import { Types } from 'mongoose';
+import GeocoderArcGIS from 'geocoder-arcgis';
+
+const geocoder = new GeocoderArcGIS({
+    client_id: 'WCnuOto8agJh2chF', // optional, see below
+    client_secret: 'dd256c1ca70043788843a4a1050bdfc9', // optional, see below
+});
 
 export const createStation = async (req, res) => {
     try {
-        const docs = await Station.create({
-            ...req.body,
+        const { name, address } = req.body;
+        const data = await geocoder.findAddressCandidates(address, {});
+        const loc = data.candidates[0].location;
+
+        const location = {
+            type: 'Point',
+            coordinates: [loc.y, loc.x],
+        };
+
+        const station = await Station.create({
+            name,
+            address,
+            location,
         });
+
         return res.status(201).json({
-            message: 'Station id - ' + docs._id,
+            station,
         });
     } catch (error) {
         console.log(error);

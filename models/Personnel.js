@@ -34,7 +34,7 @@ const PersonnelSchema = new Schema({
     station: {
         type: Schema.Types.ObjectId,
         ref: Station,
-    }
+    },
 });
 
 const Personnel = model('Personnel', PersonnelSchema);

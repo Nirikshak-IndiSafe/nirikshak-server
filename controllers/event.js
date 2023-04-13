@@ -11,7 +11,8 @@ const geocoder = new GeocoderArcGIS({
 
 export const createEvent = async (req, res) => {
     try {
-        const { name, start, end, address, radius, personName } = req.body;
+        const { name, start, end, address, radius, personName, description } =
+            req.body;
         console.log(req.body);
         // geocoder
         //     .findAddressCandidates(address, {})
@@ -31,6 +32,7 @@ export const createEvent = async (req, res) => {
             location,
             radius,
             personnels: personName,
+            description,
         });
         const personnelEvents = personName.map((person) => ({
             event: event._id,
